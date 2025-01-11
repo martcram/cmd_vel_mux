@@ -105,11 +105,11 @@ CmdVelMux::CmdVelMux(rclcpp::NodeOptions options)
     add_on_set_parameters_callback(
     std::bind(&CmdVelMux::parameterUpdate, this, std::placeholders::_1));
 
-  output_topic_pub_ = this->create_publisher<geometry_msgs::msg::Twist>("cmd_vel", 10);
-  RCLCPP_DEBUG(get_logger(), "CmdVelMux : subscribe to output topic 'cmd_vel'");
+  output_topic_pub_ = this->create_publisher<geometry_msgs::msg::Twist>((publisher_namespace + "cmd_vel"), 10);
+  RCLCPP_DEBUG(get_logger(), "CmdVelMux : publish to output topic '%scmd_vel'", publisher_namespace.c_str());
 
   active_subscriber_pub_ = this->create_publisher<std_msgs::msg::String>(
-    "active", rclcpp::QoS(1).transient_local());    // latched topic
+    (publisher_namespace + "active"), rclcpp::QoS(1).transient_local()); // latched topic
 
   // Notify the world that right now nobody is publishing on cmd_vel yet
   auto active_msg = std::make_unique<std_msgs::msg::String>();
