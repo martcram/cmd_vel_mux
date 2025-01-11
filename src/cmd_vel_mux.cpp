@@ -87,6 +87,20 @@ CmdVelMux::CmdVelMux(rclcpp::NodeOptions options)
     configureFromParameters(parsed_parameters);
   }
 
+  std::string publisher_namespace{};
+  std::map<std::string, rclcpp::Parameter> publisher_parameters;
+  if (!get_parameters("publishers", publisher_parameters) || publisher_parameters.size() < 1) {
+    RCLCPP_WARN(get_logger(), "No publisher parameters configured!");
+  }
+  else {
+    if (publisher_parameters.count("namespace") == 0) {
+      RCLCPP_WARN(get_logger(), "No publisher namespace configured!");
+    }
+    else {
+      publisher_namespace = publisher_parameters["namespace"].as_string();
+    }
+  }
+
   param_cb_ =
     add_on_set_parameters_callback(
     std::bind(&CmdVelMux::parameterUpdate, this, std::placeholders::_1));
